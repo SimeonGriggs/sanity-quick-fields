@@ -1,0 +1,61 @@
+{
+  "name": "sanity-quick-fields",
+  "version": "0.0.1",
+  "description": "Helper function for simply generating Sanity.io schema fields",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SimeonGriggs/sanity-quick-fields"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "sanity"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "author": "Simeon Griggs <simeon@hey.com>",
+  "license": "MIT",
+  "dependencies": {
+    "change-case": "^4.1.2",
+    "is": "^3.3.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.11",
+    "babel-jest": "^26.6.3",
+    "jest": "^26.6.3",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.14.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-wesbos": "^1.0.1",
+    "eslint-plugin-html": "^6.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "wesbos"
+    ],
+    "rules": {
+      "no-console": 2,
+      "prettier/prettier": [
+        "error",
+        {
+          "trailingComma": "es5",
+          "singleQuote": true,
+          "printWidth": 80,
+          "semi": false
+        }
+      ]
+    }
+  }
+}
