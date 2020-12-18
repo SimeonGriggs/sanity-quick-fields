@@ -1,4 +1,4 @@
-# Sanity.io quickFields
+# Sanity.io Quick Fields
 
 Sanity.io Schema is awesome, but the definition files get _long_.
 
