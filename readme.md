@@ -43,7 +43,7 @@ import { qF } from "sanity-quick-fields";
 ## Parameters
 
 ```js
-qF(name, type, options, fields);
+qF(name, type, options);
 ```
 
 ### `name` (string or Array)
@@ -93,25 +93,62 @@ qF('dateOfBirth', 'date', { dateFormat: 'YY-MM-DD' })
 
 You can pass in `rows` here on the `text` field type. It's smart enough to store that _outside_ of `options` (why is it this way Sanity, why?!).
 
-### `fields` (Array)
+## Quick Field Builder, Methods
+
+For fields that have children, there are two different functions with helper methods.
+
+`qFB()` / `quickFieldsBuilder()`
+
+You can pass in the same first three params as above, but also append `.children()` and `.preview()` methods.
+
+Unfortunately you also need to end with `.toObject` to prevent a Type warning in Sanity.
+
+### `.children()` (Array)
 
 If creating an Array or Object `type`, pass an **Array** of fields. This is where nesting `qF()` becomes powerful.
 
 ```js
-qF('contact', 'object', undefined, [qF('twitter'), qF('email')])
+qFB('contact', 'object')
+  .children([qF('name'), qF('email')])
+  .toObject
 
 {
     name: 'contact',
     title: 'Contact',
     type: 'object',
     fields: [
-        { name: 'twitter', title: 'Twitter', type: 'string' },
+        { name: 'name', title: 'Name', type: 'string' },
         { name: 'email', title: 'Email', type: 'string' },
     ],
 }
 ```
 
-Skip over options by passing `undefined` as the third param.
+### `.preview()` (Object)
+
+Pass in an object to fill out the `select` key in preview. This has limited usefulness as you probably want to customise the preview further. But it's a neat shortcut.
+
+```js
+qFB('contact', 'object')
+  .children([qF('name'), qF('email')])
+  .preview({title: 'name', subtitle: 'email'})
+  .toObject
+
+{
+    name: 'contact',
+    title: 'Contact',
+    type: 'object',
+    fields: [
+        { name: 'name', title: 'Name', type: 'string' },
+        { name: 'email', title: 'Email', type: 'string' },
+    ],
+    preview: {
+      select: {
+        title: 'name',
+        subtitle: 'email'
+      }
+    }
+}
+```
 
 ## Mix and match
 

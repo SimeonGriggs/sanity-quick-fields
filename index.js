@@ -7,9 +7,8 @@ import is from 'is'
  * @param {string|Array<String>} name Pass a `string` key to automatically create a title case title. Pass an `Array` to specify name and title.
  * @param {string} type Field type, defaults to 'string'
  * @param {Object} options Pass an object of options for the field
- * @param {Array} fields Pass an Array of fields for 'array' or 'object' types
  */
-export function qF(name, type = 'string', options = {}, fields = []) {
+export function qF(name, type = 'string', options = {}) {
   const field = {}
 
   // Handle `name` param
@@ -38,21 +37,69 @@ export function qF(name, type = 'string', options = {}, fields = []) {
       delete options.rows
     }
 
+    // 'to' also lives outside options
+    if (type === 'reference' && options.to) {
+      field.to = options.to
+      delete options.to
+    }
+
     // If there's still options left...
     if (Object.keys(options).length) {
       field.options = options
     }
   }
 
-  // Handle `fields` param
-  if (fields && is.array(fields) && fields.length) {
-    if (type === 'array') field.of = fields
-    if (type === 'object') field.fields = fields
-  }
-
   return field
 }
 
+/**
+ * Class for building fields with Children and Previews
+ */
+class QuickFieldBuilder {
+  constructor(name, type = 'string', options = {}) {
+    const fieldBase = qF(name, type, options)
+
+    Object.keys(fieldBase).forEach((key) => (this[key] = fieldBase[key]))
+
+    return this
+  }
+
+  // Add children fields
+  children(fields = []) {
+    if (is.array(fields) && fields.length) {
+      if (this.type === 'array') this.of = fields
+      if (this.type === 'object') this.fields = fields
+    }
+
+    return this
+  }
+
+  // Add preview helper
+  preview(select = {}) {
+    this.preview = { select }
+
+    return this
+  }
+
+  // Return a plain Object
+  get toObject() {
+    const fieldObj = {}
+    Object.keys(this).forEach((key) => (fieldObj[key] = this[key]))
+    return fieldObj
+  }
+}
+
+export function qFB(...args) {
+  return new QuickFieldBuilder(...args)
+}
+
+/**
+ * Long-name functions
+ */
 export function quickField(...args) {
   return qF(...args)
+}
+
+export function quickFieldBuilder(...args) {
+  return qFB(...args)
 }
