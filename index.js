@@ -1,14 +1,29 @@
 import { capitalCase } from 'change-case'
 import is from 'is'
 
+function validationBuilder(Rule, params) {
+  let r = Rule;
+  for (const key in params) {
+    if (key === 'required') {
+      if (params.required) r = r.required();
+    // } else if ([''].includes(key)) {
+    //   r = r[key]();
+    } else if (['min', 'max', 'regex', 'error', 'warning'].includes(key)) {
+      r = r[key](params[key]);
+    }
+  }
+  return r;
+}
+
 /**
  * Shorthand helper for writing Sanity fields
  *
  * @param {string|Array<String>} name Pass a `string` key to automatically create a title case title. Pass an `Array` to specify name and title.
  * @param {string} type Field type, defaults to 'string'
  * @param {Object} options Pass an object of options for the field
+ * @param {function|Object|Array} validation Validation function or configuration parameters (Object or array of Objects).
  */
-export function qF(name, type = 'string', options = {}) {
+export function qF(name, type = 'string', options = {}, validation = null) {
   const field = {}
 
   // Handle `name` param
@@ -46,6 +61,22 @@ export function qF(name, type = 'string', options = {}) {
     // If there's still options left...
     if (Object.keys(options).length) {
       field.options = options
+    }
+  }
+
+  // Handle `validation` param
+  if (validation !== null) {
+    // If a function, pass it as is
+    if (is.function(validation)) {
+      field.validation = validation;
+
+    // If an object, build the validation function with a single rule
+    } else if (is.object(validation) && Object.keys(validation).length) {
+      field.validation = Rule => validationBuilder(Rule, validation);
+
+    // If an array, build the validation function with multiple rules
+    } else if (is.array(validation) && validation.length > 0) {
+      field.validation = Rule => validation.map(v => validationBuilder(Rule, v));
     }
   }
 
