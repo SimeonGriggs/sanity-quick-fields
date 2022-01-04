@@ -43,7 +43,7 @@ import { qF } from "sanity-quick-fields";
 ## Parameters
 
 ```js
-qF(name, type, options);
+qF(name, type, options, validation);
 ```
 
 ### `name` (string or Array)
@@ -92,6 +92,52 @@ qF('dateOfBirth', 'date', { dateFormat: 'YY-MM-DD' })
 ```
 
 You can pass in `rows` here on the `text` field type. It's smart enough to store that _outside_ of `options` (why is it this way Sanity, why?!).
+
+### `validation` (function or Object or Array)
+
+
+A **function** is passed as is:
+
+```js
+qF('title', 'string', {}, Rule => Rule.required().max(50).error('Required and max 50 chars.'))
+
+{
+    name: 'title',
+    type: 'string',
+    validation: Rule => Rule.required().max(50).error('Required and max 50 chars.')
+}
+```
+
+```js
+qF('title', 'string', {}, Rule => [
+  Rule.required().max(50).error('Required and max 50 chars.'),
+  Rule.regex(/^[-a-z0-9]+$/g).error('Only a-z, 0-9, and -.'),
+  Rule.min(10).warning('Should be at least 10 chars')
+])
+
+{
+    name: 'title',
+    type: 'string',
+    validation: Rule => [
+        Rule.required().max(50).error('Required and max 50 chars.'),
+        Rule.regex(/^[-a-z0-9]+$/g).error('Only a-z, 0-9, and -.'),
+        Rule.min(10).warning('Should be at least 10 chars')
+    ]
+}
+```
+
+An **Object** or **Array** will generate the corresponding function.  
+The above examples can be defined as follows:
+
+```js
+qF('title', 'string', {}, { error: 'Required and max 50 chars.', required: true, max: 50 })
+
+qF('title', 'string', {}, [
+  { error: 'Required and max 50 chars.', required: true, max: 50 },
+  { error: 'Only a-z, 0-9, and -.', regex: /^[-a-z0-9]+$/g },
+  { warning: 'Should be at least 10 chars', min: 10 }
+])
+```
 
 ## Quick Field Builder, Methods
 
