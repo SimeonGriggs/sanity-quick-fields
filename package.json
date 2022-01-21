@@ -1,6 +1,6 @@
 {
   "name": "sanity-quick-fields",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Helper function for simply generating Sanity.io schema fields",
   "repository": {
     "type": "git",
